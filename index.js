@@ -17,14 +17,21 @@ const app = express();
 // Update the CORS configuration
 app.use(cors({
   origin: function (origin, callback) {
-    const allowedOrigins = process.env.NODE_ENV === 'production'
-      ? [process.env.FRONTEND_URL, 'https://ks-lz4tnqwec-cookie755233s-projects.vercel.app']
-      : ['http://localhost:5002', 'http://localhost:3000'];
+    const allowedOrigins = [
+      'https://ks-map.vercel.app',                                    // Production URL
+      'https://ks-lz4tnqwec-cookie755233s-projects.vercel.app',      // Preview URL
+      'http://localhost:5002',                                        // Local development
+      'http://localhost:3000'                                         // Local development
+    ];
+
+    // Add FRONTEND_URL to allowed origins if it's defined
+    if (process.env.FRONTEND_URL) {
+      allowedOrigins.push(process.env.FRONTEND_URL);
+    }
 
     console.log('Incoming origin:', origin);
     console.log('Allowed origins:', allowedOrigins);
     console.log('NODE_ENV:', process.env.NODE_ENV);
-    console.log('FRONTEND_URL:', process.env.FRONTEND_URL);
 
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
