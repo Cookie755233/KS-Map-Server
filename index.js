@@ -17,31 +17,27 @@ const app = express();
 // Update the CORS configuration
 app.use(cors({
   origin: function (origin, callback) {
-    const allowedOrigins = [
-      'https://ks-map.vercel.app',                                    // Production URL
-      'https://ks-lz4tnqwec-cookie755233s-projects.vercel.app',      // Preview URL
-      'http://localhost:5002',                                        // Local development
-      'http://localhost:3000'                                         // Local development
-    ];
-
-    // Add FRONTEND_URL to allowed origins if it's defined
-    if (process.env.FRONTEND_URL) {
-      allowedOrigins.push(process.env.FRONTEND_URL);
+    // Allow all Vercel preview deployments and production URL
+    if (origin && (
+      origin.includes('cookie755233s-projects.vercel.app') ||  // Any preview deployment
+      origin === 'https://ks-map.vercel.app' ||               // Production URL
+      origin.startsWith('http://localhost:')                  // Local development
+    )) {
+      callback(null, true);
+      return;
     }
 
     console.log('Incoming origin:', origin);
-    console.log('Allowed origins:', allowedOrigins);
     console.log('NODE_ENV:', process.env.NODE_ENV);
 
     // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-
-    if (allowedOrigins.includes(origin) || process.env.NODE_ENV !== 'production') {
+    if (!origin || process.env.NODE_ENV !== 'production') {
       callback(null, true);
-    } else {
-      console.log('CORS blocked origin:', origin);
-      callback(new Error('Not allowed by CORS'));
+      return;
     }
+
+    console.log('CORS blocked origin:', origin);
+    callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
