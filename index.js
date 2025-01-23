@@ -145,10 +145,8 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 const PORT = process.env.PORT || 5002;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
 
+// Remove the standalone app.listen and keep it only in the init function
 const init = async () => {
   try {
     // Connect to MongoDB
