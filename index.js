@@ -54,6 +54,12 @@ app.options('*', cors());
 // Parse JSON bodies
 app.use(express.json());
 
+// Debug middleware
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.path}`);
+  next();
+});
+
 // Routes
 app.use('/api/locations', locationRoutes);
 app.use('/api/auth', authRoutes);
